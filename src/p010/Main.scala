@@ -1,4 +1,4 @@
-package p009
+package p010
 
 object Main {
   def isPrime(n: Long) = {
