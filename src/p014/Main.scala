@@ -1,16 +1,15 @@
 package p014
 
 object Main {
-  def collatzSequence(n: Long): Stream[Long] = {
-    n #:: {
-      if (n == 1) Stream.Empty
-      else if (n % 2 == 0) collatzSequence(n / 2)
-      else collatzSequence(3 * n + 1)
-    }
+  def collatzSequenceIterator(n: Long): Iterator[Long] = {
+    Iterator.iterate(n){k =>
+      if (k % 2 == 0) k / 2
+      else 3 * k + 1
+    }.takeWhile(_ != 1)
   }
 
   def main(args: Array[String]): Unit = {
-    val answer = (1L until 1000000L).maxBy(collatzSequence(_).length)
+    val answer = (1L until 1000000L).maxBy(collatzSequenceIterator(_).length)
     println(answer)
   }
 }
