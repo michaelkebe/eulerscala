@@ -2,7 +2,7 @@ package p016
 
 object Main {
   private def sumOfDigits(n: BigInt) = {
-    n.toString().map(_.toString.toInt).sum
+    n.toString().map(_.asDigit).sum
   }
 
   def main(args: Array[String]): Unit = {
