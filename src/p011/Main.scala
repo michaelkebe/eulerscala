@@ -1,7 +1,6 @@
 package p011
 
 object Main {
-
   val grid: List[List[Int]] =
     """08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
       |49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
@@ -26,27 +25,23 @@ object Main {
       .stripMargin.split(util.Properties.lineSeparator).toList.map(_.split(" ").map(_.toInt).toList)
 
   private val numberOfAdjacentNumbers = 4
-  private val gridSize = grid.length
 
-  private def padGrid(grid: List[List[Int]]) = {
-    grid.zipWithIndex.map { case (row, index) =>
-      List.fill(gridSize - (index + 1))(0) ::: row ::: List.fill(index)(0)
-    }
+  private def valueAt(x: Int, y: Int) = {
+    if (grid.isDefinedAt(x) && grid(x).isDefinedAt(y)) grid(y)(x)
+    else 0
+  }
+
+  private def linesAt(x: Int, y: Int) = {
+    val right = (0 until numberOfAdjacentNumbers).map(offset => valueAt(x + offset, y))
+    val down = (0 until numberOfAdjacentNumbers).map(offset => valueAt(x, y + offset))
+    val upRight = (0 until numberOfAdjacentNumbers).map(offset => valueAt(x + offset, y - offset))
+    val downRight = (0 until numberOfAdjacentNumbers).map(offset => valueAt(x + offset, y + offset))
+    List(right, down, upRight, downRight)
   }
 
   def main(args: Array[String]): Unit = {
-    val leftToRightLines = grid.flatMap(_.sliding(numberOfAdjacentNumbers))
-    val topToBottomLines = grid.transpose.flatMap(_.sliding(numberOfAdjacentNumbers))
-    val topLeftToBottomRightLines = padGrid(grid).transpose.flatMap(_.sliding(numberOfAdjacentNumbers))
-    val bottomRightToTopRightLines = padGrid(grid.reverse).transpose.flatMap(_.sliding(numberOfAdjacentNumbers))
-
-    val listOfAdjacentLines = leftToRightLines :::
-      topToBottomLines :::
-      topLeftToBottomRightLines :::
-      bottomRightToTopRightLines
-
+    val listOfAdjacentLines = (for (x <- 0 until grid.length; y <- 0 until grid.length) yield linesAt(x, y)).flatten
     val answer = listOfAdjacentLines.map(_.product).max
     println(answer)
   }
-
 }
